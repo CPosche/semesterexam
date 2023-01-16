@@ -4,10 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import controllers.MatchController;
+import dtos.MatchDTO;
 import entities.Location;
 import entities.Match;
 import entities.Player;
 import junit.framework.Assert;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import utils.EMF_Creator;
@@ -19,14 +21,14 @@ public class MatchesTest {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    @BeforeEach
-    public void beforeEachTestMethod() {
+    @BeforeAll
+    public static void beforeEachTestMethod() {
         EntityManagerFactory emf = EMF_Creator.createEntityManagerFactoryForTest();
         EntityManager em = emf.createEntityManager();
         Player player = new Player("testPlayer", "30709907", "test1@test1.dk", "ok");
-        Player player2 = new Player("testPlayer", "30709907", "test2@test2.dk", "ok");
-        Player player3 = new Player("testPlayer", "30709907", "test3@test3.dk", "ok");
-        Player player4 = new Player("testPlayer", "30709907", "test4@test4.dk", "ok");
+        Player player2 = new Player("testPlayer2", "30709907", "test2@test2.dk", "ok");
+        Player player3 = new Player("testPlayer3", "30709907", "test3@test3.dk", "ok");
+        Player player4 = new Player("testPlayer4", "30709907", "test4@test4.dk", "ok");
         Location location = new Location("testLocationvej 1", "testCity", "wet");
         Match match = new Match("testTeam2", "testJudge", "knockout", false);
         Match match2 = new Match("testTeam", "testJudge", "knockout", false);
@@ -51,7 +53,7 @@ public class MatchesTest {
         EntityManagerFactory emf = EMF_Creator.createEntityManagerFactoryForTest();
         MatchController mc = MatchController.getMatchController(emf);
         JsonArray matchesArray = GSON.fromJson(mc.getMatches(), JsonArray.class);
-        Assert.assertEquals(2, matchesArray.size());
+        Assert.assertEquals(3, matchesArray.size());
     }
 
 //    @Test
@@ -67,7 +69,26 @@ public class MatchesTest {
         EntityManagerFactory emf = EMF_Creator.createEntityManagerFactoryForTest();
         MatchController mc = MatchController.getMatchController(emf);
         JsonArray matchesArray = GSON.fromJson(mc.getMatchesByLocation("testLocationvej 1"), JsonArray.class);
-        Assert.assertEquals(2, matchesArray.size());
+        Assert.assertEquals(3, matchesArray.size());
+    }
+
+    @Test
+    public void testCreateMatch(){
+        EntityManagerFactory emf = EMF_Creator.createEntityManagerFactoryForTest();
+        MatchController mc = MatchController.getMatchController(emf);
+        Match match = mc.create("newTeam", "newtestJudge", "knockout", true, "testLocationvej 1", "testCity", "wet");
+        Assert.assertTrue(match.getId() > 0);
+    }
+
+    @Test
+    public void testUpdateMatch(){
+        EntityManagerFactory emf = EMF_Creator.createEntityManagerFactoryForTest();
+        MatchController mc = MatchController.getMatchController(emf);
+        Location location = new Location("testLocationvej 1", "testCity", "wet");
+        MatchDTO matchDTO = new MatchDTO("updatedTeam", "updatedtestJudge", "knockout", false, location);
+        Match match = mc.updateMatch(matchDTO, 1);
+        Assert.assertEquals(1, match.getId());
+        Assert.assertEquals("updatedTeam", match.getOpponent());
     }
 
 }

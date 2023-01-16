@@ -3,6 +3,9 @@ package controllers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.MatchDTO;
+import entities.Location;
+import entities.Match;
+import utils.EMF_Creator;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -26,6 +29,17 @@ public class MatchController {
         return instance;
     }
 
+    public Match create(String opponent, String judge, String type, boolean inDoors, String address, String city, String condition) {
+        EntityManager em = emf.createEntityManager();
+        Location location = LocationController.getLocationController(emf).create(address, city, condition);
+        Match match = new Match(opponent, judge, type, inDoors);
+        em.getTransaction().begin();
+        em.persist(match);
+        match.addLocation(location);
+        em.getTransaction().commit();
+        return match;
+    }
+
     public String getMatches() {
         EntityManager em = emf.createEntityManager();
         try {
@@ -42,6 +56,26 @@ public class MatchController {
             TypedQuery<MatchDTO> query = em.createQuery("SELECT new dtos.MatchDTO(m) FROM Match m WHERE m.id = :id", MatchDTO.class);
             query.setParameter("id", id);
             return GSON.toJson(query.getSingleResult());
+        } finally {
+            em.close();
+        }
+    }
+
+    public Match updateMatch(MatchDTO matchDTO, int id){
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            Match match = em.find(Match.class, id);
+            match.setOpponent(matchDTO.getOpponent());
+            match.setJudge(matchDTO.getJudge());
+            match.setType(matchDTO.getType());
+            match.setInDoors(matchDTO.isInDoors());
+            if(matchDTO.getLocation() != null){
+                Location location = LocationController.getLocationController(emf).create(matchDTO.getLocation().getAddress(), matchDTO.getLocation().getCity(), matchDTO.getLocation().getCondition());
+                match.addLocation(location);
+            }
+            em.getTransaction().commit();
+            return match;
         } finally {
             em.close();
         }

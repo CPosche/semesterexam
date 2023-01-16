@@ -126,7 +126,7 @@ public class Match implements Serializable {
     }
 
     public void addPlayer(Player player) {
-        playerList.add(player);
+        this.playerList.add(player);
         player.getMatchList().add(this);
     }
 

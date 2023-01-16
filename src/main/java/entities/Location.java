@@ -31,7 +31,7 @@ public class Location implements Serializable {
     @Column(name = "location_condition")
     private String condition;
 
-    @OneToMany(mappedBy = "location", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "location")
     private Set<Match> matchList = new LinkedHashSet<>();
 
     public Location() {
@@ -83,16 +83,5 @@ public class Location implements Serializable {
         this.matchList = matchList;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Location)) return false;
-        Location location = (Location) o;
-        return getId() == location.getId();
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
-    }
 }

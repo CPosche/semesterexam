@@ -35,7 +35,7 @@ public class Player implements Serializable {
     @Column(name = "player_status")
     private String status;
 
-    @ManyToMany(mappedBy = "playerList", cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "playerList")
     private Set<Match> matchList = new LinkedHashSet<>();
 
     public Player() {
@@ -94,18 +94,5 @@ public class Player implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Player)) return false;
-        Player player = (Player) o;
-        return getId() == player.getId();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
     }
 }

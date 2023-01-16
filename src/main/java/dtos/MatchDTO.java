@@ -1,5 +1,6 @@
 package dtos;
 
+import entities.Location;
 import entities.Match;
 
 import java.util.List;
@@ -15,12 +16,30 @@ public class MatchDTO {
 
     private boolean inDoors;
 
+    private Location location;
+
     public MatchDTO(Match match) {
         this.opponent = match.getOpponent();
         this.judge = match.getJudge();
         this.type = match.getType();
         this.inDoors = match.isInDoors();
         this.players = match.getPlayersAsStrings();
+    }
+
+    public MatchDTO(String opponent, String judge, String type, boolean inDoors, Location location) {
+        this.opponent = opponent;
+        this.judge = judge;
+        this.type = type;
+        this.inDoors = inDoors;
+        this.location = location;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     public String getOpponent() {
