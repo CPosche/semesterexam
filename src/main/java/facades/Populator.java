@@ -9,9 +9,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 //import security.entities.User;
-import entities.Boat;
-import entities.Harbour;
-import entities.Owner;
 import utils.EMF_Creator;
 
 /**
@@ -20,20 +17,20 @@ import utils.EMF_Creator;
  */
 public class Populator {
     public static void populate(){
-        EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
-        EntityManager em = emf.createEntityManager();
-        Owner owner = new Owner("John", "Street 1", "12345678");
-        Boat boat = new Boat("Tahoe", "Pontoon Cascade Elite Windshield", "The Prestige", "");
-        Harbour habour = new Harbour("Havnen", "Havnevej 1", 50);
-        boat.addHabour(habour);
-        owner.addBoat(boat);
-        try {
-            em.getTransaction().begin();
-            em.persist(owner);
-            em.getTransaction().commit();
-        } finally {
-            em.close();
-        }
+//        EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
+//        EntityManager em = emf.createEntityManager();
+//        Owner owner = new Owner("John", "Street 1", "12345678");
+//        Boat boat = new Boat("Tahoe", "Pontoon Cascade Elite Windshield", "The Prestige", "");
+//        Harbour habour = new Harbour("Havnen", "Havnevej 1", 50);
+//        boat.addHabour(habour);
+//        owner.addBoat(boat);
+//        try {
+//            em.getTransaction().begin();
+//            em.persist(owner);
+//            em.getTransaction().commit();
+//        } finally {
+//            em.close();
+//        }
     }
     
     public static void main(String[] args) {

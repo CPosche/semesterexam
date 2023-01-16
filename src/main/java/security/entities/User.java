@@ -61,13 +61,6 @@ public class User implements Serializable {
         return BCrypt.checkpw(pw, userPass);
     }
 
-//  public User(String userName, String userPass, FaceitUser faceitUser) {
-//    this.userName = userName;
-//    this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt(10));
-//    this.faceitUser = faceitUser;
-//    faceitUser.setUser(this);
-//  }
-
   public User(String userName, String userPass) {
     this.userName = userName;
     this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt(10));
