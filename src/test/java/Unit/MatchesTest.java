@@ -9,14 +9,13 @@ import entities.Location;
 import entities.Match;
 import entities.Player;
 import junit.framework.Assert;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import utils.EMF_Creator;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MatchesTest {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -49,11 +48,12 @@ public class MatchesTest {
     }
 
     @Test
+    @Order(1)
     public void testMatches() {
         EntityManagerFactory emf = EMF_Creator.createEntityManagerFactoryForTest();
         MatchController mc = MatchController.getMatchController(emf);
         JsonArray matchesArray = GSON.fromJson(mc.getMatches(), JsonArray.class);
-        Assert.assertEquals(3, matchesArray.size());
+        Assert.assertEquals(2, matchesArray.size());
     }
 
 //    @Test
@@ -65,14 +65,16 @@ public class MatchesTest {
 //    }
 
     @Test
+    @Order(2)
     public void testGetMatchesByLocation(){
         EntityManagerFactory emf = EMF_Creator.createEntityManagerFactoryForTest();
         MatchController mc = MatchController.getMatchController(emf);
         JsonArray matchesArray = GSON.fromJson(mc.getMatchesByLocation("testLocationvej 1"), JsonArray.class);
-        Assert.assertEquals(3, matchesArray.size());
+        Assert.assertEquals(2, matchesArray.size());
     }
 
     @Test
+    @Order(3)
     public void testCreateMatch(){
         EntityManagerFactory emf = EMF_Creator.createEntityManagerFactoryForTest();
         MatchController mc = MatchController.getMatchController(emf);
@@ -81,6 +83,7 @@ public class MatchesTest {
     }
 
     @Test
+    @Order(4)
     public void testUpdateMatch(){
         EntityManagerFactory emf = EMF_Creator.createEntityManagerFactoryForTest();
         MatchController mc = MatchController.getMatchController(emf);
