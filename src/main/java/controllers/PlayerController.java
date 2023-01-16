@@ -38,13 +38,12 @@ public class PlayerController {
 
     public Player update(int id, PlayerDTO playerDTO) {
         EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
         Player player = em.find(Player.class, id);
         player.setName(playerDTO.getName());
         player.setPhone(playerDTO.getPhone());
         player.setEmail(playerDTO.getEmail());
         player.setStatus(playerDTO.getStatus());
-        em.getTransaction().begin();
-        em.persist(player);
         em.getTransaction().commit();
         return player;
     }

@@ -70,10 +70,6 @@ public class MatchController {
             match.setJudge(matchDTO.getJudge());
             match.setType(matchDTO.getType());
             match.setInDoors(matchDTO.isInDoors());
-            if(matchDTO.getLocation() != null){
-                Location location = LocationController.getLocationController(emf).create(matchDTO.getLocation().getAddress(), matchDTO.getLocation().getCity(), matchDTO.getLocation().getCondition());
-                match.addLocation(location);
-            }
             em.getTransaction().commit();
             return match;
         } finally {
