@@ -1,5 +1,7 @@
 package rest;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import entities.Location;
 import entities.Match;
 import entities.Player;
@@ -13,10 +15,10 @@ import javax.ws.rs.Path;
 @Path("generate")
 public class PopulatorEndPoint {
 
-
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @POST
-    public void populate() {
+    public String populate() {
         EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
         EntityManager em = emf.createEntityManager();
         Player player = new Player("testPlayer", "30709907", "test1@test1.dk", "ok");
@@ -40,6 +42,7 @@ public class PopulatorEndPoint {
         } finally {
             em.close();
         }
+        return GSON.toJson("Populated");
     }
 
 }
