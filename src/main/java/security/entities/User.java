@@ -15,6 +15,7 @@ import javax.validation.constraints.Size;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import entities.Player;
 import org.mindrot.jbcrypt.BCrypt;
 
 @Entity
@@ -36,6 +37,10 @@ public class User implements Serializable {
   @NotNull
   @Column(name = "user_pass")
   private String userPass;
+
+  @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+  @JoinColumn(name = "FK_player_id", referencedColumnName = "player_id")
+  private Player player;
 
   @JoinTable(name = "user_has_roles", joinColumns = {
     @JoinColumn(name = "FK_user_id", referencedColumnName = "user_id")}, inverseJoinColumns = {
@@ -64,6 +69,10 @@ public class User implements Serializable {
   public User(String userName, String userPass) {
     this.userName = userName;
     this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt(10));
+  }
+
+  public Player getPlayer() {
+    return player;
   }
 
   public int getUserId() {
@@ -101,6 +110,16 @@ public class User implements Serializable {
   public void addRole(Role userRole) {
     userRole.getUserList().add(this);
     this.roleList.add(userRole);
+  }
+
+  public void setPlayer(Player player) {
+    this.player = player;
+    player.setUser(this);
+  }
+
+  public void removePlayer(Player player) {
+    this.player = null;
+    player.setUser(null);
   }
 
   @Override

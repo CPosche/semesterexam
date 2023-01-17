@@ -11,21 +11,27 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import facades.UserController;
+
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import security.entities.User;
 import errorhandling.API_Exception;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import security.errorhandling.AuthenticationException;
 import errorhandling.GenericExceptionMapper;
+
 import javax.persistence.EntityManagerFactory;
+
 import utils.EMF_Creator;
 
 @Path("login")
@@ -46,12 +52,12 @@ public class LoginEndpoint {
             username = json.get("username").getAsString();
             password = json.get("password").getAsString();
         } catch (Exception e) {
-           throw new API_Exception("Malformed JSON Suplied",400,e);
+            throw new API_Exception("Malformed JSON Suplied", 400, e);
         }
 
         try {
             User user = USER_FACADE.getVeryfiedUser(username, password);
-            String token = createToken(username, user.getRolesAsStrings());
+            String token = createToken(user);
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("username", username);
             responseJson.addProperty("token", token);
@@ -66,10 +72,10 @@ public class LoginEndpoint {
         throw new AuthenticationException("Invalid username or password! Please try again");
     }
 
-    private String createToken(String userName, List<String> roles) throws JOSEException {
+    private String createToken(User user) throws JOSEException {
 
         StringBuilder res = new StringBuilder();
-        for (String string : roles) {
+        for (String string : user.getRolesAsStrings()) {
             res.append(string);
             res.append(",");
         }
@@ -78,14 +84,27 @@ public class LoginEndpoint {
 
         JWSSigner signer = new MACSigner(SharedSecret.getSharedKey());
         Date date = new Date();
-        JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                .subject(userName)
-                .claim("username", userName)
-                .claim("roles", rolesAsString)
-                .claim("issuer", issuer)
-                .issueTime(date)
-                .expirationTime(new Date(date.getTime() + TOKEN_EXPIRE_TIME))
-                .build();
+        JWTClaimsSet claimsSet;
+        if (user.getPlayer() != null) {
+            claimsSet = new JWTClaimsSet.Builder().subject(user.getUserName())
+                    .claim("username", user.getUserName())
+                    .claim("roles", rolesAsString)
+                    .claim("player", user.getPlayer().getId())
+                    .issuer(issuer)
+                    .issueTime(date)
+                    .expirationTime(new Date(date.getTime() + TOKEN_EXPIRE_TIME))
+                    .build();
+        } else {
+            claimsSet = new JWTClaimsSet.Builder()
+                    .subject(user.getUserName())
+                    .claim("username", user.getUserName())
+                    .claim("roles", rolesAsString)
+                    .claim("issuer", issuer)
+                    .issueTime(date)
+                    .expirationTime(new Date(date.getTime() + TOKEN_EXPIRE_TIME))
+                    .build();
+        }
+
         SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
         signedJWT.sign(signer);
         return signedJWT.serialize();

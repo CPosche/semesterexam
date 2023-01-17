@@ -1,5 +1,7 @@
 package entities;
 
+import security.entities.User;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -35,6 +37,9 @@ public class Player implements Serializable {
     @Column(name = "player_status")
     private String status;
 
+    @OneToOne(mappedBy = "player")
+    private User user;
+
     @ManyToMany(mappedBy = "playerList")
     private Set<Match> matchList = new LinkedHashSet<>();
 
@@ -62,6 +67,14 @@ public class Player implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getName() {
@@ -94,18 +107,5 @@ public class Player implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Player)) return false;
-        Player player = (Player) o;
-        return getId() == player.getId();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
     }
 }

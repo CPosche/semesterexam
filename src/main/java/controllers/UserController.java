@@ -75,7 +75,9 @@ public class UserController {
         EntityManager em = emf.createEntityManager();
         User user;
         try {
-            user = em.find(User.class, username);
+            user = em.createQuery("SELECT u FROM User u WHERE u.userName = :username", User.class)
+                    .setParameter("username", username)
+                    .getSingleResult();
             if (user == null || !user.verifyPassword(password)) {
                 throw new AuthenticationException("Invalid user name or password");
             }
@@ -83,23 +85,6 @@ public class UserController {
             em.close();
         }
         return user;
-    }
-
-    public static String getFaceitId(String faceitnickname) throws IOException, IndexOutOfBoundsException {
-        URL url = new URL("https://open.faceit.com/data/v4/search/players?nickname=" + faceitnickname + "&game=csgo&offset=0&limit=1");
-        HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-        httpConn.setRequestMethod("GET");
-
-        httpConn.setRequestProperty("accept", "application/json");
-        httpConn.setRequestProperty("Authorization", "Bearer ad0be573-6f92-405a-a9c5-e5e59a062061");
-
-        InputStream responseStream = httpConn.getResponseCode() / 100 == 2
-                ? httpConn.getInputStream()
-                : httpConn.getErrorStream();
-        Scanner s = new Scanner(responseStream).useDelimiter("\\A");
-        String response = s.hasNext() ? s.next() : "";
-        JsonObject json = JsonParser.parseString(response).getAsJsonObject();
-        return json.get("items").getAsJsonArray().get(0).getAsJsonObject().get("player_id").getAsString();
     }
 
     public static boolean checkUserExists(String username) {
@@ -111,10 +96,5 @@ public class UserController {
             }
         }
         return false;
-    }
-
-    public static void main(String[] args) throws IOException {
-        String test = UserController.getFaceitId("DirtyHarty");
-        System.out.println(test);
     }
 }

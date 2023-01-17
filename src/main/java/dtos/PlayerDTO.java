@@ -1,6 +1,10 @@
 package dtos;
 
+import entities.Player;
+
 public class PlayerDTO {
+
+    private int id;
 
     private String name;
 
@@ -10,11 +14,20 @@ public class PlayerDTO {
 
     private String status;
 
-    public PlayerDTO(String name, String phone, String email, String status) {
-        this.name = name;
-        this.phone = phone;
-        this.email = email;
-        this.status = status;
+    public PlayerDTO(Player player) {
+        this.id = player.getId();
+        this.name = player.getName();
+        this.phone = player.getPhone();
+        this.email = player.getEmail();
+        this.status = player.getStatus();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

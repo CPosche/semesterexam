@@ -125,21 +125,13 @@ public class Match implements Serializable {
         location.getMatchList().add(this);
     }
 
+    public void removeLocation(Location location) {
+        this.location = null;
+        location.getMatchList().remove(this);
+    }
+
     public void addPlayer(Player player) {
         this.playerList.add(player);
         player.getMatchList().add(this);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Match)) return false;
-        Match match = (Match) o;
-        return getId() == match.getId();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
     }
 }
