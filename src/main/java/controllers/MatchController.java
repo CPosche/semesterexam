@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import dtos.MatchDTO;
 import entities.Location;
 import entities.Match;
+import entities.Player;
 import utils.EMF_Creator;
 
 import javax.persistence.EntityManager;
@@ -102,5 +103,19 @@ public class MatchController {
         MatchController mc = MatchController.getMatchController(emf);
         String string = GSON.toJson(mc.getMatchById(1));
         System.out.println(string);
+    }
+
+    public MatchDTO registerToMatch(int playerid, int matchid) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            Match match = em.find(Match.class, matchid);
+            Player player = em.find(Player.class, playerid);
+            match.addPlayer(player);
+            em.getTransaction().commit();
+            return new MatchDTO(match);
+        } finally {
+            em.close();
+        }
     }
 }

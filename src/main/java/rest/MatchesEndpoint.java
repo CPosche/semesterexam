@@ -83,4 +83,15 @@ public class MatchesEndpoint {
         return GSON.toJson(mc.updateMatch(match, id));
     }
 
+    @PUT
+    @Path("registration")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public String registerToMatch(String prompt){
+        JsonObject json = JsonParser.parseString(prompt).getAsJsonObject();
+        int playerid = json.get("playerid").getAsInt();
+        int matchid = json.get("matchid").getAsInt();
+        return GSON.toJson(mc.registerToMatch(playerid, matchid));
+    }
+
 }

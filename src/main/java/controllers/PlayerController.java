@@ -3,6 +3,7 @@ package controllers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.PlayerDTO;
+import entities.Match;
 import entities.Player;
 import security.entities.User;
 
@@ -56,15 +57,23 @@ public class PlayerController {
         Player player = em.find(Player.class, id);
         TypedQuery<User> query = em.createQuery("SELECT u FROM User u join u.player p WHERE p.id = :id", User.class);
         query.setParameter("id", id);
+        TypedQuery<Match> query2 = em.createQuery("SELECT m FROM Match m join m.playerList p WHERE p.id = :id", Match.class);
+        query2.setParameter("id", id);
         User user;
+        Match match;
         try {
             user = query.getSingleResult();
+            match = query2.getSingleResult();
         } catch (Exception e) {
             user = null;
+            match = null;
         }
         em.getTransaction().begin();
         if (user != null) {
             user.removePlayer(player);
+        }
+        if (match != null) {
+            match.removePlayer(player);
         }
         em.remove(player);
         em.getTransaction().commit();

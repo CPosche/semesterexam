@@ -134,4 +134,9 @@ public class Match implements Serializable {
         this.playerList.add(player);
         player.getMatchList().add(this);
     }
+
+    public void removePlayer(Player player) {
+        this.playerList.remove(player);
+        player.getMatchList().remove(this);
+    }
 }
