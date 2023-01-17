@@ -84,6 +84,23 @@ public class UserEndpoint {
         return "relog for changes to take effect";
     }
 
+    @PUT
+    @Path("becomeadmin")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public String becomeAdmin(String prompt) {
+        EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
+        JsonObject json = JsonParser.parseString(prompt).getAsJsonObject();
+        EntityManager em = emf.createEntityManager();
+        User user = em.createQuery("SELECT u FROM User u WHERE u.userName = :username", User.class)
+                .setParameter("username", json.get("username").getAsString())
+                .getSingleResult();
+        em.getTransaction().begin();
+        user.addRole(em.find(Role.class, 1));
+        em.getTransaction().commit();
+        return "relog for changes to take effect";
+    }
+
     @POST
     @Path("remove")
     @Produces({MediaType.APPLICATION_JSON})
