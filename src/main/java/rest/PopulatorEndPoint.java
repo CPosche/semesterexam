@@ -9,6 +9,7 @@ import utils.EMF_Creator;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
@@ -17,7 +18,7 @@ public class PopulatorEndPoint {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    @POST
+    @GET
     public String populate() {
         EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
         EntityManager em = emf.createEntityManager();
